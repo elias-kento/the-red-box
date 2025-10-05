@@ -1,0 +1,221 @@
+/* public/assets/styles.css - Tema escuro com destaque em vermelho */
+:root{
+  --bg:#000; --panel:#0D0D0F; --panel2:#141418;
+  --red:#E4002B; --white:#EDEDED; --muted:#9A9A9A; --teal:#56C2C2;
+  --line:#D9D9D9;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--white);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  display:flex; min-height:100vh; overflow:hidden;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width: 230px; background:#0A0A0C; padding:22px 18px;
+  display:flex; flex-direction:column; align-items:center; gap:26px;
+  border-right: 1px solid #1a1a1a;
+}
+.logo{ width:64px; height:64px; display:grid; place-items:center }
+.logo svg{ width:100%; height:100% }
+
+.menu{ width:100%; display:flex; flex-direction:column; gap:22px }
+.item{ display:flex; align-items:center; gap:14px; color:var(--white); text-decoration:none; }
+.item .icon{ width:28px; height:28px; display:grid; place-items:center; color:var(--red) }
+.item span{ font-weight:600 }
+.sep{ width:80%; height:2px; background:var(--line); margin:6px auto; border-radius:2px; opacity:.75 }
+
+/* MAIN */
+.main{
+  flex:1; display:flex; flex-direction:column; padding:18px 28px;
+}
+.topbar{
+  display:flex; justify-content:flex-end;
+  align-items:center; gap:24px; padding:8px 0 16px 0;
+  border-bottom:1px solid #141414;
+}
+.content{
+  flex:1; padding:24px 6px;
+}
+
+/* login rápido (topbar) */
+.login-topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.login-topbar input {
+  padding: 6px 8px;
+  border: 1px solid #2A2A2A;
+  border-radius: 4px;
+  background: #0C0C0F;
+  color: var(--white);
+}
+.login-topbar button {
+  padding: 6px 12px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* auth (usuário logado) */
+.auth {
+  color:#b9b9b9; font-size:14px;
+}
+.auth a {
+  color: var(--red);
+  text-decoration:none;
+}
+
+/* FORMULÁRIOS */
+.form-card {
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  max-width:480px;
+}
+.form-card input,
+.form-card select,
+.form-card textarea {
+  width:100%;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #444;
+  background:#0C0C0F;
+  color:var(--white);
+}
+.form-card button {
+  background: var(--red);
+  border:none; border-radius:6px;
+  padding:10px;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ALERTAS */
+.alert {
+  padding:12px 16px;
+  border-radius:6px;
+  margin-bottom:16px;
+}
+.alert.success { background:#1d3d1d; color:#aef1ae; }
+.alert.error   { background:#3d1d1d; color:#f1aeae; }
+
+/* HERO (index.php) */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.hero svg {
+  width: 220px;
+  height: 220px;
+}
+.hero h1 {
+  font-size: 64px;
+  color: var(--red);
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+/* Formulário estilizado e responsivo */
+.card-form {
+  background-color: var(--panel2);
+  padding: 32px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-title {
+  color: var(--red);
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.card-form input,
+.card-form select {
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #0C0C0F;
+  color: var(--white);
+  font-size: 16px;
+}
+
+.card-form button {
+  background-color: var(--red);
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  color: var(--white);
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+
+
+/* Responsivo: telas menores */
+@media (max-width: 600px) {
+  .card-form {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .form-title {
+    font-size: 20px;
+  }
+
+  .card-form button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+
+/* RESPONSIVO */
+@media (max-width: 900px){
+  .sidebar{ width: 84px; padding:18px 10px }
+  .item span{ display:none }
+  .sep{ width:60% }
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--red);
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--line);
+  text-align: left; /* ou center, se preferir */
+}
