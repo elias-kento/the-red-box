@@ -31,7 +31,20 @@ if ($email && $senha_digitada) {
       $_SESSION['id']    = $usuario['id'];
       $_SESSION['nome']  = $usuario['nome'];
       $_SESSION['email'] = $email;
-      $_SESSION['tipo']  = strtoupper($usuario['tipo']);
+
+      // padroniza/garante valor em tipo (evita NULL)
+      // caso a coluna seja diferente em outra versão, tente outras chaves
+      $raw_tipo = $usuario['tipo'] ?? $usuario['tipo_usuario'] ?? '';
+      $_SESSION['tipo']  = strtoupper(trim($raw_tipo ?: 'CLIENTE'));
+
+      // Se for ADMIN, direto para o painel
+      if ($_SESSION['tipo'] === 'ADMIN') {
+        // fechar conexões antes de redirecionar
+        $stmt->close();
+        $conn->close();
+        header("Location: admin.php");
+        exit;
+      }
 
       // Verifica se perfil já foi preenchido
       $user_id = intval($usuario['id']);

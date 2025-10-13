@@ -15,7 +15,18 @@ if ($conn->connect_error) {
   die("Erro na conexão: " . $conn->connect_error);
 }
 
-$user_id = intval($_SESSION['id']);
+// Se foi passado user_id por GET e o usuário logado for ADMIN, permite ver outro perfil
+$requested_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+$session_id = intval($_SESSION['id']);
+$can_view_other = (!empty($_SESSION['tipo']) && strtoupper($_SESSION['tipo']) === 'ADMIN');
+
+if ($requested_id > 0 && $can_view_other) {
+  $user_id = $requested_id;
+} else {
+  $user_id = $session_id;
+}
+
+// busca perfil do user_id determinado
 $stmt = $conn->prepare("SELECT u.nome, u.email, u.tipo AS tipo_usuario, p.* 
                         FROM usuarios u 
                         LEFT JOIN perfil_usuarios p ON u.id = p.user_id 
@@ -27,6 +38,9 @@ $perfil = $result->fetch_assoc() ?: [];
 $stmt->close();
 
 function e($v){ return htmlspecialchars(trim($v ?? ''), ENT_QUOTES, 'UTF-8'); }
+
+// detectar se a visualização veio do painel admin
+$isFromAdmin = (isset($_GET['from']) && $_GET['from'] === 'admin');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -74,8 +88,8 @@ function e($v){ return htmlspecialchars(trim($v ?? ''), ENT_QUOTES, 'UTF-8'); }
 
     .page-title {
       font-size: 32px; font-weight: 700; color: var(--red);
-      margin-bottom: 24px; border-bottom: 2px solid var(--line); width: 100%; max-width: 800px;
-      padding-bottom: 10px;
+      margin-bottom: 12px; border-bottom: 2px solid var(--line); width: 100%; max-width: 800px;
+      padding-bottom: 6px;
     }
 
     .profile-card {
@@ -116,59 +130,42 @@ function e($v){ return htmlspecialchars(trim($v ?? ''), ENT_QUOTES, 'UTF-8'); }
       margin-top: 24px; flex-wrap: wrap;
     }
 
-    .actions {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-}
+    .actions a,
+    .actions button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      width: 140px;
+      height: 44px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 1;
+      transition: background 0.2s;
+      text-align: center;
+    }
 
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-}
+    .actions a:hover,
+    .actions button:hover {
+      background: #ff324f;
+    }
 
-.actions a,
-.actions button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--red);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  width: 140px;              /* largura fixa para todos */
-  height: 44px;              /* altura fixa */
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 1;
-  transition: background 0.2s;
-  text-align: center;
-}
+    .delete-btn {
+      background: #700;
+    }
 
-.actions a:hover,
-.actions button:hover {
-  background: #ff324f;
-}
+    .delete-btn:hover {
+      background: #a00;
+    }
 
-.delete-btn {
-  background: #700;
-}
-
-.delete-btn:hover {
-  background: #a00;
-}
-
-form.inline {
-  display: inline;
-}
-
+    form.inline {
+      display: inline;
+    }
 
     @media (max-width: 700px) {
       .profile-grid { grid-template-columns: 1fr; }
@@ -200,6 +197,18 @@ form.inline {
   <!-- MAIN -->
   <main class="main">
     <h1 class="page-title">Meu Perfil</h1>
+
+    <!-- botão de voltar ao painel (aparece só se veio do admin) -->
+        <?php if ($isFromAdmin && $can_view_other): ?>
+          <div class="actions" style="justify-content:flex-start; margin-bottom:12px;">
+            <a href="admin.php"
+              style="white-space:nowrap; display:inline-flex; align-items:center; gap:8px;
+                      padding:8px 12px; background:#333; border-radius:6px; color:#fff;
+                      font-weight:600; text-decoration:none; font-size:15px; line-height:1;">
+              ← Voltar ao Painel
+            </a>
+          </div>
+        <?php endif; ?>
 
     <?php if (!empty($_SESSION['profile_msg'])): ?>
       <p class="server-msg"><?= e($_SESSION['profile_msg']); unset($_SESSION['profile_msg']); ?></p>
